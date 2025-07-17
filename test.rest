@@ -1,0 +1,2 @@
+### api to check
+GET http://localhost:3000
