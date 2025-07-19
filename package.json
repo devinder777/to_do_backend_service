@@ -1,17 +1,17 @@
 {
-  "name": "backend",
+  "name": "to_do_backend_application",
   "version": "1.0.0",
   "main": "build/server.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node build/server.js",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch --env-file=.env src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "A Todo backend API with Express.js that also serves a static frontend from the public folder.",
   "devDependencies": {
     "@types/node": "^24.0.14",
     "tsx": "^4.20.3",
@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@types/express": "^4.17.17",
-    "express": "^5.1.0"
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }
