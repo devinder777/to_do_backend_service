@@ -29,14 +29,14 @@ Content-Type: application/json
 ### get all todos (auth required)
 GET http://localhost:3000/todos
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
+Authorization: eyJhbGciOiJIUtokenIkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
 
 
 ### POST /todos
 ### create a new todo (auth required)
 POST http://localhost:3000/todos
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
+Authorization: eyJhbGciOiJIUtokenIkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
 
 {
     "task": "Finish backend project"
@@ -47,7 +47,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0
 ### update a todo (auth required)
 PUT http://localhost:3000/todos/1
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
+Authorization: eyJhbGciOiJIUtokenIkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
 
 {
     "task": "Finish backend project (updated)",
@@ -58,4 +58,4 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0
 ### DELETE /todos/:id
 ### delete a todo (auth required)
 DELETE http://localhost:3000/todos/1
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
+Authorization: eyJhbGciOiJIUtokenIkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzUyOTQ0NTU3LCJleHAiOjE3NTMwMzA5NTd9.uXrX_hjAq2uBn9ekOsE_-jlfgd49wTl_Okn_9mHLIrM
