@@ -2,23 +2,61 @@
 ### get the web page
 GET http://localhost:3000
 
+
 ### POST /auth/login
 ### login the existing user
 POST http://localhost:3000/auth/login
-Content-Type: Application/json
+Content-Type: application/json
 
 {
     "email": "devinder@mail.com",
     "password": "hello@123"
 }
+
 
 ### POST /auth/register
 ### register a new user
 POST http://localhost:3000/auth/register
-Content-Type: Application/json
+Content-Type: application/json
 
 {
     "email": "devinder@mail.com",
     "password": "hello@123"
 }
 
+### token
+@token = variable value
+
+### GET /todos
+### get all todos (auth required)
+GET http://localhost:3000/todos
+Authorization: Bearer {{token}}
+
+
+### POST /todos
+### create a new todo (auth required)
+POST http://localhost:3000/todos
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "task": "Finish backend project"
+}
+
+
+### PUT /todos/:id
+### update a todo (auth required)
+PUT http://localhost:3000/todos/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "task": "Finish backend project (updated)",
+    "completed": true
+}
+
+
+### DELETE /todos/:id
+### delete a todo (auth required)
+DELETE http://localhost:3000/todos/1
+Authorization: Bearer {{token}}

@@ -3,6 +3,7 @@ import {PORT} from './globals/env';
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 import { auth, todos } from './routes';
+import authMiddleware from './middleware/authMiddleware';
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // routes
 app.use('/auth', auth);
-app.use('/todos', todos);
+app.use('/todos', authMiddleware ,todos);
 
 
 app.listen(PORT, () => {
