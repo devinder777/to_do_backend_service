@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "A Todo backend API with Express.js that also serves a static frontend from the public folder.",
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.14",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"

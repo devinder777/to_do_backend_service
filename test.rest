@@ -1,2 +1,24 @@
-### api to check
+### GET /
+### get the web page
 GET http://localhost:3000
+
+### POST /auth/login
+### login the existing user
+POST http://localhost:3000/auth/login
+Content-Type: Application/json
+
+{
+    "email": "devinder@mail.com",
+    "password": "hello@123"
+}
+
+### POST /auth/register
+### register a new user
+POST http://localhost:3000/auth/register
+Content-Type: Application/json
+
+{
+    "email": "devinder@mail.com",
+    "password": "hello@123"
+}
+

@@ -3,52 +3,416 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - WEB</title>
+    <title>Todo - Web</title>
     <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
-<div class="login-container">
-    <div class="login-header">
-        <h1>Welcome</h1>
-        <p>Please sign in to your account</p>
+<!-- Authentication Container -->
+<div id="authContainer" class="container">
+    <div class="auth-header">
+        <h1 id="formTitle">Welcome</h1>
+        <p id="formSubtitle">Please sign in to your account</p>
     </div>
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+    <div id="errorMessage" class="error-message" style="display: none;"></div>
+    <div id="successMessage" class="success-message" style="display: none;"></div>
+
+    <!-- Login Form -->
+    <div id="loginSection" class="form-section">
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email Address</label>
+                <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="auth-button" id="loginButton">Sign In</button>
+
+            <div class="forgot-password">
+                <a onclick="showMessage('Password reset functionality will be implemented later', 'success')">Forgot
+                    your password?</a>
+            </div>
+        </form>
+
+        <div class="form-toggle">
+            <p>Don't have an account? <a id="showSignup">Sign up</a></p>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+    <!-- Sign Up Form -->
+    <div id="signupSection" class="form-section hidden">
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="signupEmail">Email Address</label>
+                <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="password" placeholder="Create a password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password"
+                       required>
+            </div>
+
+            <button type="submit" class="auth-button" id="signupButton">Create Account</button>
+        </form>
+
+        <div class="form-toggle">
+            <p>Already have an account? <a id="showLogin">Sign in</a></p>
         </div>
-
-        <button type="submit" class="login-button">Sign In</button>
-
-        <div class="forgot-password">
-            <a href="#" onclick="alert('Password reset functionality would be implemented here')">Forgot your
-                password?</a>
-        </div>
-    </form>
-
-    <div class="signup-link">
-        <p>Don't have an account? <a href="#" onclick="alert('Sign up functionality would be implemented here')">Sign
-            up</a></p>
     </div>
 </div>
 
+<!-- Home Screen Container -->
+<div id="homeContainer" class="container home-container" style="display: none;">
+    <div class="home-header">
+        <h1>Dashboard</h1>
+        <p>Welcome to your personal space</p>
+    </div>
+
+    <div class="user-info">
+        <h2>User Information</h2>
+        <p><strong>Email:</strong> <span id="userEmail">-</span></p>
+        <p><strong>User ID:</strong> <span id="userId">-</span></p>
+        <p><strong>Session:</strong> Active</p>
+    </div>
+
+    <button class="logout-button" id="logoutButton">Logout</button>
+</div>
+
 <script>
-	document.getElementById('loginForm').addEventListener('submit', function (e) {
+
+	console.log("loading web page")
+	// Auth state management
+	let authState = {
+		isAuthenticated: false,
+		user: null,
+		token: null
+	};
+
+	// DOM elements
+	const authContainer = document.getElementById('authContainer');
+	const homeContainer = document.getElementById('homeContainer');
+	const loginSection = document.getElementById('loginSection');
+	const signupSection = document.getElementById('signupSection');
+	const formTitle = document.getElementById('formTitle');
+	const formSubtitle = document.getElementById('formSubtitle');
+	const errorMessage = document.getElementById('errorMessage');
+	const successMessage = document.getElementById('successMessage');
+
+	// Initialize app
+	function init() {
+		checkAuthStatus();
+		setupEventListeners();
+	}
+
+	// Check if user is already authenticated
+	function checkAuthStatus() {
+		const token = localStorage.getItem('authToken');
+		const userData = localStorage.getItem('userData');
+
+		if (token && userData) {
+			try {
+				const user = JSON.parse(userData);
+				authState = {
+					isAuthenticated: true,
+					user: user,
+					token: token
+				};
+				showHomeScreen();
+			} catch (error) {
+				console.error('Error parsing user data:', error);
+				clearAuthData();
+			}
+		}
+	}
+
+	// Setup event listeners
+	function setupEventListeners() {
+		// Form switching
+		document.getElementById('showSignup').addEventListener('click', (e) => {
+			e.preventDefault();
+			switchToSignup();
+		});
+
+		document.getElementById('showLogin').addEventListener('click', (e) => {
+			e.preventDefault();
+			switchToLogin();
+		});
+
+		// Form submissions
+		document.getElementById('loginForm').addEventListener('submit', handleLogin);
+		document.getElementById('signupForm').addEventListener('submit', handleSignup);
+		document.getElementById('logoutButton').addEventListener('click', handleLogout);
+	}
+
+	// Switch to signup form
+	function switchToSignup() {
+		loginSection.classList.add('hidden');
+		signupSection.classList.remove('hidden');
+		formTitle.textContent = 'Create Account';
+		formSubtitle.textContent = 'Please fill in your details to register';
+		clearMessages();
+	}
+
+	// Switch to login form
+	function switchToLogin() {
+		signupSection.classList.add('hidden');
+		loginSection.classList.remove('hidden');
+		formTitle.textContent = 'Welcome';
+		formSubtitle.textContent = 'Please sign in to your account';
+		clearMessages();
+	}
+
+	// Show message to user
+	function showMessage(message, type = 'error') {
+		clearMessages();
+		const messageEl = type === 'error' ? errorMessage : successMessage;
+		messageEl.textContent = message;
+		messageEl.style.display = 'block';
+
+		// Auto hide after 5 seconds
+		setTimeout(() => {
+			messageEl.style.display = 'none';
+		}, 5000);
+	}
+
+	// Clear all messages
+	function clearMessages() {
+		errorMessage.style.display = 'none';
+		successMessage.style.display = 'none';
+	}
+
+	// Handle login
+	async function handleLogin(e) {
 		e.preventDefault();
 
-		const email = document.getElementById('email').value;
-		const password = document.getElementById('password').value;
+		const email = document.getElementById('loginEmail').value;
+		const password = document.getElementById('loginPassword').value;
 
-		if (email && password) {
-			alert('Login functionality would be implemented here.\nEmail: ' + email);
+		if (!email || !password) {
+			showMessage('Please fill in all fields');
+			return;
 		}
-	});
+
+		setLoadingState(true);
+
+		try {
+			const response = await fetch('/auth/login', {
+				method: 'POST',
+				body: JSON.stringify({
+					email: email,
+					password: password
+				}),
+				headers: {
+					"content-type": 'application/json'
+				}
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				// Save auth data
+				localStorage.setItem('authToken', data.token);
+				localStorage.setItem('userData', JSON.stringify({
+					email: email,
+					userId: data.userId
+				}));
+
+				authState = {
+					isAuthenticated: true,
+					user: {email, userId: data.userId},
+					token: data.token
+				};
+
+				showMessage('Login successful!', 'success');
+				setTimeout(() => showHomeScreen(), 1000);
+			} else {
+				showMessage(response.statusText || 'Login failed');
+			}
+		} catch (error) {
+			showMessage('Network error. Please try again.');
+		} finally {
+			setLoadingState(false);
+		}
+	}
+
+	// Handle signup
+	async function handleSignup(e) {
+		e.preventDefault();
+
+		const email = document.getElementById('signupEmail').value;
+		const password = document.getElementById('signupPassword').value;
+		const confirmPassword = document.getElementById('confirmPassword').value;
+
+		// Client-side validation
+		if (!email || !password || !confirmPassword) {
+			showMessage('Please fill in all fields');
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			showMessage('Passwords do not match');
+			return;
+		}
+
+		if (password.length < 6) {
+			showMessage('Password must be at least 6 characters long');
+			return;
+		}
+
+		setLoadingState(true);
+
+		try {
+			const response = await fetch('/auth/login', {
+				method: 'POST',
+				body: JSON.stringify({
+					email: email,
+					password: password
+				}),
+				headers: {
+					"content-type": 'application/json'
+				}
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				// Save auth data
+				localStorage.setItem('authToken', data.token);
+				localStorage.setItem('userData', JSON.stringify({
+					email: email,
+					userId: data.userId
+				}));
+
+				authState = {
+					isAuthenticated: true,
+					user: {email, userId: data.userId},
+					token: data.token
+				};
+
+				showMessage('Account created successfully!', 'success');
+				setTimeout(() => showHomeScreen(), 1000);
+			} else {
+				showMessage(response.statusText || 'Registration failed');
+			}
+		} catch (error) {
+			showMessage('Network error. Please try again.');
+		} finally {
+			setLoadingState(false);
+		}
+	}
+
+	// Handle logout
+	function handleLogout() {
+		clearAuthData();
+		authState = {
+			isAuthenticated: false,
+			user: null,
+			token: null
+		};
+		showAuthScreen();
+		showMessage('Logged out successfully', 'success');
+	}
+
+	// Show home screen
+	function showHomeScreen() {
+		authContainer.style.display = 'none';
+		homeContainer.style.display = 'block';
+
+		// Update user info
+		document.getElementById('userEmail').textContent = authState.user.email;
+		document.getElementById('userId').textContent = authState.user.userId;
+	}
+
+	// Show auth screen
+	function showAuthScreen() {
+		homeContainer.style.display = 'none';
+		authContainer.style.display = 'block';
+		clearMessages();
+		resetForms();
+	}
+
+	// Set loading state
+	function setLoadingState(loading) {
+		const buttons = document.querySelectorAll('.auth-button');
+		buttons.forEach(button => {
+			button.disabled = loading;
+			button.textContent = loading ? 'Please wait...' :
+				(button.id === 'loginButton' ? 'Sign In' : 'Create Account');
+		});
+
+		if (loading) {
+			authContainer.classList.add('loading');
+		} else {
+			authContainer.classList.remove('loading');
+		}
+	}
+
+	// Clear auth data from localStorage
+	function clearAuthData() {
+		localStorage.removeItem('authToken');
+		localStorage.removeItem('userData');
+	}
+
+	// Reset forms
+	function resetForms() {
+		document.getElementById('loginForm').reset();
+		document.getElementById('signupForm').reset();
+		switchToLogin();
+	}
+
+	// Simulate API call (replace with actual fetch calls later)
+	function simulateApiCall(endpoint, payload) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				// Simulate different responses based on endpoint
+				if (endpoint === '/auth/login') {
+					if (payload.email === 'test@test.com' && payload.password === 'password') {
+						resolve({
+							success: true,
+							data: {
+								token: 'mock_jwt_token_' + Date.now(),
+								userId: Math.floor(Math.random() * 1000)
+							}
+						});
+					} else {
+						resolve({
+							success: false,
+							message: 'Invalid email or password'
+						});
+					}
+				} else if (endpoint === '/auth/register') {
+					// Simulate email already exists check
+					if (payload.email === 'existing@test.com') {
+						resolve({
+							success: false,
+							message: 'Email already exists'
+						});
+					} else {
+						resolve({
+							success: true,
+							data: {
+								token: 'mock_jwt_token_' + Date.now(),
+								userId: Math.floor(Math.random() * 1000)
+							}
+						});
+					}
+				}
+			}, 1000); // Simulate network delay
+		});
+	}
+
+	// Initialize the app when DOM is loaded
+	document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
